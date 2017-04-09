@@ -211,15 +211,56 @@ void ShellSort(int arr[], int len) {
 	}
 }
 
+void SelectSort(int arr[], int len) {
+
+	if (arr == NULL) {
+		return;
+	}
+
+	int min_index = 0;
+	for (int i = 0; i < len - 1; i++) {
+		min_index = i;
+		for (int j = i + 1; j < len; j++) {
+			if (arr[j] < arr[min_index]) {
+				min_index = j;
+			}
+		}
+
+		Swap(arr[i], arr[min_index]);
+	}
+}
+
+void BubbleSort(int arr[], int len) {
+
+	if (arr == NULL) {
+		return;
+	}
+
+	int k = 0;
+	int flag = len;
+	while (flag > 0) {
+		k = flag;
+		flag = 0;
+		for (int i = 1; i < k; i++) {
+			if (arr[i - 1] > arr[i]) {
+				Swap(arr[i - 1], arr[i]);
+				flag = i;
+			}
+		}
+	}
+}
+
 int main() {
 
 	int arr[] = {49, 48, 65, 97, 76, 13, 27, 49};
 	int len = sizeof(arr) / sizeof(int);
 //	HeapSort(arr, len);
-//	QuickSort2(arr, 0, len - 1);
+//	QuickSort(arr, 0, len - 1);
 //	MergeSort(arr, len);
 //	InsertSort(arr, len);
-	ShellSort(arr, len);
+//	ShellSort(arr, len);
+//	SelectSort(arr, len);
+	BubbleSort(arr, len);
 	for (int i = 0; i < len; i++) {
 		cout << arr[i] << " ";
 	}
