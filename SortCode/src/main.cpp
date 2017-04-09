@@ -196,6 +196,21 @@ void InsertSort(int arr[], int len) {
 	}
 }
 
+void ShellSort(int arr[], int len) {
+
+	if (arr == NULL) {
+		return;
+	}
+
+	for (int gap = len / 2; gap > 0; gap = gap >> 1) {
+		for (int i = gap; i < len; i++) {
+			for (int j = i - gap; j >= 0 && arr[j] > arr[j + gap]; j -= gap) {
+				Swap(arr[j], arr[j + gap]);
+			}
+		}
+	}
+}
+
 int main() {
 
 	int arr[] = {49, 48, 65, 97, 76, 13, 27, 49};
@@ -203,7 +218,8 @@ int main() {
 //	HeapSort(arr, len);
 //	QuickSort2(arr, 0, len - 1);
 //	MergeSort(arr, len);
-	InsertSort(arr, len);
+//	InsertSort(arr, len);
+	ShellSort(arr, len);
 	for (int i = 0; i < len; i++) {
 		cout << arr[i] << " ";
 	}
