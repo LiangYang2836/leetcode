@@ -1,0 +1,170 @@
+/*
+终结者C
+时间限制：C/C++语言 1000MS；其他语言 3000MS
+内存限制：C/C++语言 65536KB；其他语言 589824KB
+题目描述：
+收到情报，有批新造的机器人要运输到前线。小C将去破坏机器人的运输。小C将激光炮放置在公路的一旁，等运输车经过的时候发射（假设激光炮一定可以射穿车辆）。由于能源有限，激光炮只能发射两次。可以认为激光炮放在坐标轴的原点处，并向y轴正方向发射。每辆运输车可以看作是一个矩形，起始的x轴坐标为Xi ,所有的车均位于第一象限，长度为Li,速度为1，朝x轴负方向运动。即经过t时间后，该车车头的x坐标为Xi-t，车尾坐标为Xi-t+Li 。只要打中车的任何一个部分就算击中。
+请你算算，他在哪两个时刻发射，才能摧毁最多的运输车。
+
+输入
+第一行一个正整数 n ( 2≤N≤200 )，表示运输个的数量。
+接下来n行，每行两个整数X和L(1≤X、L≤109)，表示一辆车的x轴坐标和长度。
+输出
+输出最多可以摧毁的运输车数量。
+
+样例输入
+4
+2 2
+3 1
+5 2
+7 3
+样例输出
+4
+
+Hint
+第一炮在第3秒发射，击中1号和2号运输车，此时1号和2号车身的x坐标范围分别为[-1,1]和[0,1]；
+第二炮在第7秒发射，击中3号和4号运输车，此时3号和4号车身的x坐标范围分别为[-2,0]和[0,3]；
+*/
+#include <iostream>
+#include <algorithm>
+using namespace std;
+const int MAXN = 220;
+struct tnode {
+    int data, num;
+} c[MAXN * 2];
+
+struct node {
+    int x, y;
+} a[MAXN * 2];
+
+bool cmp (tnode a, tnode b) {
+    return a.data < b.data;
+}
+
+int main () {
+    int n;
+    cin >> n;
+    for (int i = 1; i <= n; i ++) {
+        int x, l;
+        cin >> x >> l;
+        c[i * 2 - 1].data = x;
+        c[i * 2 - 1].num = -i;
+        c[i * 2].data = x + l;
+        c[i * 2].num = i;
+    }
+    int m = n * 2;
+    sort (c + 1, c + m + 1, cmp);
+    int now = 1;
+    a[-c[1].num].x = 1;
+    for (int i = 2; i <= m; i ++) {
+        if (c[i].data != c[i - 1].data) {
+            now++;
+        }
+        int tmp = c[i].num;
+        if (tmp < 0) {
+            a[-tmp].x = now;
+        } else {
+            a[tmp].y = now;
+        }
+    }
+    int maxs = 0;
+    for (int i = 1; i < now; i++) {
+        for (int j = i + 1; j <= now; j++) {
+            int ans = 0;
+            for (int k = 1; k <= n; k++) {
+                if (((a[k].x <= i) && (a[k].y >= i)) || ((a[k].x <= j) && (a[k].y >= j))) {
+                    ans ++;
+                }
+            }
+            if (ans > maxs) {
+                maxs = ans;
+            }
+        }
+    }
+    cout << maxs << endl;
+    return 0;
+
+}
+
+
+
+
+/*
+有一条很长的队伍，队伍里面一共有n个人。所有的人分为三类：警察，小偷和普通人。将队伍里面的人从前到后由1到n编号，编号为i的人与编号为j的人的距离为i与j之差的绝对值。
+每一个警察有一个能力值x，表示他能够监视与他距离不超过x的所有人，小偷被警察发现当且仅当他被一个或多个警察监视到。你知道在整条队伍中，一共有多少个小偷会被警察发现吗？
+
+输入
+输入有两行，第一行一个数n(1<=n<=100000)，接下来一行有一个长度为n的字符串，依次表示队伍中的每一个人。如果某一位是1-9的某个数字x，表示这一位是一个能力值为x的警察；如果某一位是字符X表示这一位是小偷；如果某一位是字符#表示这是一个普通人。输入保证不会出现其它字符。
+输出
+输出一个数，整条队伍中被警察发现的小偷总数。
+
+样例输入
+9
+X1X#2X#XX
+样例输出
+3
+
+Hint
+在第一组样例中，一共有9个人，第2位是一个能力值为1的警察，他可以发现位置1,3的两个小偷，第5位是一个能力值为2的警察，他可以发现位置3,6的两个小偷。所以本题中，位置为1,3,6的三个小偷被警察发现了，总个数为3。
+
+*/
+/*
+#include <iostream>
+#include <vector>
+#include <set>
+using namespace std;
+
+int Find(vector<char> &que, const int n) {
+
+    if (n == 0) {
+        return 0;
+    }
+    char cur_char;
+    int cur_police_capacity = 0;
+    int num = 0;
+    set<int> set_found;
+    for (int i = 1; i <= n; i++) {
+        cur_char = que[i];
+        if (cur_char >= '1' && cur_char <= '9') {
+            cur_police_capacity = cur_char - '0';
+            for (int j = cur_police_capacity; j > 0; j--) {
+                if ((i - j) >= 1 || (i + j) <= n) {
+                    if (que[i - j] == 'X') {
+                        if (set_found.find((i - j)) == set_found.end()) {
+                            set_found.insert((i - j));
+                            num++;
+                        }
+
+                    }
+                    if (que[i + j] == 'X') {
+                        if (set_found.find((i + j)) == set_found.end()) {
+                            set_found.insert((i + j));
+                            num++;
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+    return num;
+}
+
+int main()
+{
+    int n = 0;
+    cin >> n;
+
+    vector<char> vec;
+    vec.push_back(0);
+    char tmp;
+    for (int i = 0; i < n; i++) {
+        cin >> tmp;
+        vec.push_back(tmp);
+    }
+
+    int num = Find(vec, n + 1);
+    cout << num << endl;
+    return 0;
+}
+*/
